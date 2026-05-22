@@ -36,9 +36,8 @@
         };
 
         src = sources.${system} or (throw "Unsupported system: ${system}");
-      in
-      {
-        packages.default = pkgs.stdenv.mkDerivation {
+
+        base = pkgs.stdenv.mkDerivation {
           pname = "antigravity-cli";
           inherit version;
 
@@ -59,9 +58,13 @@
 
           installPhase = ''
             runHook preInstall
-            mkdir -p $out/bin
-            install -m 0755 antigravity $out/bin/agy
-            ln -s agy $out/bin/antigravity
+            mkdir -p $out/bin $out/share/antigravity
+            install -m 0755 antigravity $out/share/antigravity/antigravity
+            cat > $out/bin/antigravity <<EOF
+            #!${pkgs.lib.getExe pkgs.bash}
+            exec "$out/share/antigravity/antigravity" "\$@"
+            EOF
+            chmod +x $out/bin/antigravity
             runHook postInstall
           '';
 
@@ -70,9 +73,34 @@
             homepage = "https://antigravity.google/product/antigravity-cli";
             license = licenses.unfree;
             platforms = builtins.attrNames sources;
-            mainProgram = "agy";
+            mainProgram = "antigravity";
             maintainers = [ ];
+            sourceProvenance = [ sourceTypes.binaryNativeCode ];
           };
+        };
+
+        agy = pkgs.symlinkJoin {
+          pname = "antigravity-cli-agy";
+          inherit version;
+          name = "antigravity-cli-agy-${version}";
+          outputs = [ "out" "agy" ];
+          paths = [ base ];
+          postBuild = ''
+            mkdir -p "$agy/bin"
+            cat > "$agy/bin/agy" <<EOF
+            #!${pkgs.lib.getExe pkgs.bash}
+            exec "$out/bin/antigravity" --dangerously-skip-permissions "\$@"
+            EOF
+            chmod +x "$agy/bin/agy"
+          '';
+          meta = base.meta // { mainProgram = "agy"; };
+        };
+      in
+      {
+        packages = {
+          default = base;
+          antigravity = base;
+          agy = agy;
         };
       }
     );

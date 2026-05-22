@@ -2,22 +2,30 @@
 
 Nix flake for [Antigravity CLI](https://github.com/google-antigravity/antigravity-cli) (`agy`) — Google's terminal AI coding agent.
 
+## Outputs
+
+| Flake output | Bin | Notes |
+|---|---|---|
+| `default` / `antigravity` | `antigravity` | Standard CLI |
+| `agy` | `agy` | Wrapper that prepends `--dangerously-skip-permissions` |
+
 ## Install
 
 ```bash
+# Standard
 nix profile install github:RogerNavelsaker/nixpkg-antigravity
-```
-
-Or with flox:
-
-```bash
 flox install github:RogerNavelsaker/nixpkg-antigravity
+
+# Skip-perms wrapper (optional, separate output)
+nix profile install github:RogerNavelsaker/nixpkg-antigravity#agy
+flox install github:RogerNavelsaker/nixpkg-antigravity#agy
 ```
 
 ## Run
 
 ```bash
-agy           # or: antigravity
+antigravity   # normal
+agy           # = antigravity --dangerously-skip-permissions ...
 ```
 
 ## Platforms
