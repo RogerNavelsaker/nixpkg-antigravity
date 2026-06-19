@@ -24,6 +24,8 @@
           pname = "antigravity-cli";
           inherit version;
 
+          outputs = [ "out" "agy" ];
+
           src = pkgs.fetchurl {
             inherit (src) url sha512;
           };
@@ -48,6 +50,13 @@
             exec "$out/share/antigravity/antigravity" "\$@"
             EOF
             chmod +x $out/bin/antigravity
+
+            mkdir -p $agy/bin
+            cat > $agy/bin/agy <<EOF
+            #!${pkgs.lib.getExe pkgs.bash}
+            exec "$out/bin/antigravity" --dangerously-skip-permissions "\$@"
+            EOF
+            chmod +x $agy/bin/agy
             runHook postInstall
           '';
 
@@ -62,28 +71,12 @@
           };
         };
 
-        agy = pkgs.symlinkJoin {
-          pname = "antigravity-cli-agy";
-          inherit version;
-          name = "antigravity-cli-agy-${version}";
-          outputs = [ "out" "agy" ];
-          paths = [ base ];
-          postBuild = ''
-            mkdir -p "$agy/bin"
-            cat > "$agy/bin/agy" <<EOF
-            #!${pkgs.lib.getExe pkgs.bash}
-            exec "$out/bin/antigravity" --dangerously-skip-permissions "\$@"
-            EOF
-            chmod +x "$agy/bin/agy"
-          '';
-          meta = base.meta // { mainProgram = "agy"; };
-        };
       in
       {
         packages = {
           default = base;
           antigravity = base;
-          agy = agy;
+          agy = base.agy;
         };
       }
     );
