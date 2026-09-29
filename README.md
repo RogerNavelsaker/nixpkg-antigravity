@@ -14,11 +14,9 @@ Nix flake for [Antigravity CLI](https://github.com/google-antigravity/antigravit
 ```bash
 # Standard
 nix profile install github:RogerNavelsaker/nixpkg-antigravity
-flox install github:RogerNavelsaker/nixpkg-antigravity
 
 # Skip-perms wrapper (optional, separate output)
 nix profile install github:RogerNavelsaker/nixpkg-antigravity#agy
-flox install github:RogerNavelsaker/nixpkg-antigravity#agy
 ```
 
 ## Run
