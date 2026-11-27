@@ -1,0 +1,18 @@
+{
+  "kind": "url-binary",
+  "upstream": "antigravity-cli",
+  "version_url": "https://antigravity-cli-auto-updater-974169037036.us-central1.run.app/manifests/linux_amd64.json",
+  "latest_version_jq": ".version",
+  "download_url_template": "https://antigravity-cli-auto-updater-974169037036.us-central1.run.app/manifests/{platform}.json",
+  "download_resolve": true,
+  "platforms": {
+    "x86_64-linux": "linux_amd64",
+    "aarch64-linux": "linux_arm64",
+    "x86_64-darwin": "darwin_amd64",
+    "aarch64-darwin": "darwin_arm64"
+  },
+  "version_file": "sources.json",
+  "version_jq": ".version",
+  "pinned_paths": ["sources.json"],
+  "sync_script": "bash \"$NIXPKG_CI_DIR/sync-url-binary.sh\""
+}
